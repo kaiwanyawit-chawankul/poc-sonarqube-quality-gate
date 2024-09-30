@@ -1,0 +1,1 @@
+# poc-sonarqube-quality-gate
