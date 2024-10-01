@@ -21,3 +21,10 @@ After cloning the repository, run the following command to install the pre-commi
 
 ```bash
 ./setup-hooks.sh
+
+## Uninstalling Pre-Commit Hooks
+
+To uninstall the pre-commit hook, you can run the following command:
+
+```bash
+./cleanup-hooks.sh
