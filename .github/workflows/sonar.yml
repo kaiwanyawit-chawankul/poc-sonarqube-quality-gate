@@ -40,8 +40,8 @@ jobs:
       # shell: powershell
       run: |
         # mkdir .sonar\scanner
-        dotnet tool update dotnet-sonarscanner # --tool-path .\.sonar\scanner
-        dotnet tool list
+        dotnet tool update dotnet-sonarscanner --global # --tool-path .\.sonar\scanner
+        dotnet tool list --global
 
     - name: Build and analyze
       env:
