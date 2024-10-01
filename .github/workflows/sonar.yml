@@ -31,7 +31,8 @@ jobs:
       id: cache-sonar-scanner
       uses: actions/cache@v4
       with:
-        path: .\.sonar\scanner
+        #path: .\.sonar\scanner
+        path: ~/.dotnet/tools
         key: ${{ runner.os }}-sonar-scanner
         restore-keys: ${{ runner.os }}-sonar-scanner
 
@@ -39,8 +40,8 @@ jobs:
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
       # shell: powershell
       run: |
-        mkdir .sonar\scanner
-        dotnet tool update dotnet-sonarscanner --global --tool-path .\.sonar\scanner
+        #mkdir .sonar\scanner
+        dotnet tool update dotnet-sonarscanner --global #--tool-path .\.sonar\scanner
         dotnet tool list --global
 
     - name: Build and analyze
