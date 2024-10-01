@@ -21,35 +21,6 @@ jobs:
       with:
         dotnet-version: '8.0.x' # Adjust based on your project
 
-    - name: Cache PowerShell installation
-      uses: actions/cache@v3
-      with:
-        path: /var/cache/apt/archives
-        key: ${{ runner.os }}-powershell-${{ hashFiles('**/install-powershell.yml') }}
-
-    - name: Install PowerShell
-      run: |
-        # Update the package list
-        sudo apt-get update
-
-        # Install required dependencies
-        sudo apt-get install -y wget apt-transport-https software-properties-common
-
-        # Download and install the Microsoft GPG keys
-        wget -q "https://packages.microsoft.com/keys/microsoft.asc" -O- | sudo apt-key add -
-
-        # Register the Microsoft Product feed
-        sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/apt stable main"
-
-        # Update the package list again
-        sudo apt-get update
-
-        # Install PowerShell
-        sudo apt-get install -y powershell
-
-    - name: Verify PowerShell Installation
-      run: pwsh -c 'Write-Host "PowerShell is installed successfully!"'
-
     - name: Cache SonarCloud packages
       uses: actions/cache@v4
       with:
@@ -63,20 +34,23 @@ jobs:
         path: .\.sonar\scanner
         key: ${{ runner.os }}-sonar-scanner
         restore-keys: ${{ runner.os }}-sonar-scanner
+
     - name: Install SonarCloud scanner
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
       # shell: powershell
       run: |
+        mkdir .sonar\scanner
         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-    - name: Run SonarScanner Begin
-      run: dotnet sonarscanner begin /k:"kaiwanyawit-chawankul_poc-sonarqube-quality-gate" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
-    - name: Build
-      run: dotnet build
-
-    - name: Run SonarScanner End
-      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+    - name: Build and analyze
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      shell: powershell
+      run: |
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"kaiwanyawit-chawankul_poc-sonarqube-quality-gate" /o:"kaiwanyawit-chawankul" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        dotnet build
+        .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
     - name: Wait for SonarQube Quality Gate
       env:
