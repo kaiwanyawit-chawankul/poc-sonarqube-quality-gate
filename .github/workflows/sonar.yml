@@ -40,14 +40,15 @@ jobs:
         # New-Item -Path .\.sonar\scanner -ItemType Directory
         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-    - name: Run SonarScanner Begin
-      run: dotnet sonarscanner begin /k:"your_project_key" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /o:"kaiwanyawit-chawankul"
-
-    - name: Build
-      run: dotnet build
-
-    - name: Run SonarScanner End
-      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+    - name: Build and analyze
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      shell: powershell
+      run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"kaiwanyawit-chawankul_poc-sonarqube-quality-gate" /o:"kaiwanyawit-chawankul" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet build
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
     - name: Wait for SonarQube Quality Gate
       env:
