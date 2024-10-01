@@ -1,5 +1,7 @@
 # poc-sonarqube-quality-gate
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kaiwanyawit-chawankul_poc-sonarqube-quality-gate&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kaiwanyawit-chawankul_poc-sonarqube-quality-gate)
+
 colima start --cpu 4 --memory 8
 docker-compose up -d
 docker-compose up --build
