@@ -15,4 +15,9 @@ https://github.com/marketplace/actions/sonarqube-quality-gate-check
 https://docs.sonarsource.com/sonarqube/latest/devops-platform-integration/github-integration/adding-analysis-to-github-actions-workflow/#fail-workflow-on-quality-gate-failure
 
 
-test hook2
+## Installing Pre-Commit Hooks
+
+After cloning the repository, run the following command to install the pre-commit hook:
+
+```bash
+./setup-hooks.sh

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Check if SonarLint is available
+if command -v sonar-lint &> /dev/null
+then
+    # Run SonarLint analysis
+    sonar-lint analyze .
+
+    # Check for issues
+    if [ $? -ne 0 ]; then
+        echo "SonarLint analysis failed. Please fix the issues before committing."
+        exit 1
+    fi
+else
+    echo "SonarLint is not installed. Please install SonarLint to run checks."
+    exit 1
+fi
