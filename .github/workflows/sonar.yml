@@ -21,6 +21,14 @@ jobs:
       with:
         dotnet-version: '8.0.x' # Adjust based on your project
 
+    - name: Cache NuGet packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
     - name: Cache SonarCloud packages
       uses: actions/cache@v4
       with:
