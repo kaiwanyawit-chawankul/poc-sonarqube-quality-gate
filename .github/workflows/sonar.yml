@@ -41,13 +41,13 @@ jobs:
         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
     - name: Run SonarScanner Begin
-      run: dotnet sonarscanner begin /k:"kaiwanyawit-chawankul_poc-sonarqube-quality-gate" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      run: dotnet-sonarscanner begin /k:"kaiwanyawit-chawankul_poc-sonarqube-quality-gate" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
     - name: Build
       run: dotnet build
 
     - name: Run SonarScanner End
-      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
     - name: Wait for SonarQube Quality Gate
       env:
