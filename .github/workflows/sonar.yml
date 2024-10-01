@@ -60,7 +60,7 @@ jobs:
         # Wait for quality gate status
         echo "Waiting for SonarQube quality gate to be computed..."
         sleep 30 # Adjust as necessary for your project size
-        quality_gate_status=$(curl -s -u "${SONAR_TOKEN}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=your_project_key" | jq -r '.projectStatus.status')
+        quality_gate_status=$(curl -s -u "${SONAR_TOKEN}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=kaiwanyawit-chawankul_poc-sonarqube-quality-gate" | jq -r '.projectStatus.status')
 
         if [[ "$quality_gate_status" != "OK" ]]; then
           echo "Quality Gate failed: $quality_gate_status"
