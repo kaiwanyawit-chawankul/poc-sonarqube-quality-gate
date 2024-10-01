@@ -41,7 +41,7 @@ jobs:
       run: |
         mkdir .sonar\scanner
         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-        ls .sonar\scanner
+        dotnet tool list
 
     - name: Build and analyze
       env:
@@ -49,9 +49,9 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       #shell: powershell
       run: |
-        ./.sonar/scanner/dotnet-sonarscanner begin /k:"kaiwanyawit-chawankul_poc-sonarqube-quality-gate" /o:"kaiwanyawit-chawankul" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        dotnet sonarscanner begin /k:"kaiwanyawit-chawankul_poc-sonarqube-quality-gate" /o:"kaiwanyawit-chawankul" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
         dotnet build
-        ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
     - name: Wait for SonarQube Quality Gate
       env:
