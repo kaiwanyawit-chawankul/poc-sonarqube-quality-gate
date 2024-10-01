@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  sonarqube:
+    image: sonarqube:9.9-community
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  poc-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SONAR_TOKEN: ${SONAR_TOKEN}  # Make sure to set this in your .env file or environment
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  db_data:
