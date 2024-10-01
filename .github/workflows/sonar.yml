@@ -49,22 +49,36 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       #shell: powershell
       run: |
-        dotnet sonarscanner begin /k:"kaiwanyawit-chawankul_poc-sonarqube-quality-gate" /o:"kaiwanyawit-chawankul" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        dotnet sonarscanner begin /k:"${{ secrets.SONAR_PROJECT }}" /o:"${{ secrets.SONAR_ORG }}" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
         dotnet build
         dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
-    - name: Wait for SonarQube Quality Gate
+  # Check the Quality Gate status.
+    - name: SonarQube Quality Gate check
+      id: sonarqube-quality-gate-check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time.
+      timeout-minutes: 5
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        # Wait for quality gate status
-        echo "Waiting for SonarQube quality gate to be computed..."
-        sleep 30 # Adjust as necessary for your project size
-        quality_gate_status=$(curl -s -u "${SONAR_TOKEN}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=kaiwanyawit-chawankul_poc-sonarqube-quality-gate" | jq -r '.projectStatus.status')
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
 
-        if [[ "$quality_gate_status" != "OK" ]]; then
-          echo "Quality Gate failed: $quality_gate_status"
-          exit 1
-        else
-          echo "Quality Gate passed."
-        fi
+    # Optionally you can use the output from the Quality Gate in another step.
+    # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.
+    - name: "Example show SonarQube Quality Gate Status value"
+      run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+    # - name: Wait for SonarQube Quality Gate
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #   run: |
+    #     # Wait for quality gate status
+    #     echo "Waiting for SonarQube quality gate to be computed..."
+    #     sleep 30 # Adjust as necessary for your project size
+    #     quality_gate_status=$(curl -s -u "${SONAR_TOKEN}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=${{ secrets.SONAR_PROJECT }}" | jq -r '.projectStatus.status')
+
+    #     if [[ "$quality_gate_status" != "OK" ]]; then
+    #       echo "Quality Gate failed: $quality_gate_status"
+    #       exit 1
+    #     else
+    #       echo "Quality Gate passed."
+    #     fi
